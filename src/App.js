@@ -3,26 +3,34 @@ import BookCreate from "./components/BookCreate";
 import BookList from "./components/BookList";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/v1/books";
-
-const fetch_all_books = async () => {
-  const response = await axios.get(API_URL)
-  return response.data
-}
-
 function App() {
 
    const [books, setBooks] = useState([]);
+   
+   const fetchBooks = async () => {
+    const response = await axios.get("http://localhost:3001/books");
 
-   const create_book = (title) => {
-     const updated_books = [
-      ...books,
-      {
-        id:Math.round(Math.random()*9999),
-        title:title
-      }
-    ]
-     setBooks(updated_books)
+    setBooks(response.data)
+   };
+
+   useEffect(() => {
+     fetchBooks();
+   },[])
+   
+
+   const create_book = async (title) => {
+    //  const updated_books = [
+    //   ...books,
+    //   {
+    //     id:Math.round(Math.random()*9999),
+    //     title:title
+    //   }
+    // ]
+    //  setBooks(updated_books)
+      const response = await axios.post("http://localhost:3001/books",
+        {"title":title}
+      );
+      console.log(response);
    };
 
    const deleteBookbyId = (id) => {
@@ -45,14 +53,6 @@ function App() {
     setBooks(updated_books);
 
    }
-
-   useEffect(() =>{
-    let mounted = true;
-    fetch_all_books().then((items) =>{
-      setBooks(items);
-    });
-    return () => (mounted=false);
-   },[]);
 
   return (
     <div className="app">
