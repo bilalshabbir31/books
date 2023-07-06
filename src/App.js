@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookCreate from "./components/BookCreate";
 import BookList from "./components/BookList";
+import axios from "axios";
 
+const API_URL = "http://localhost:3000/api/v1/books";
+
+const fetch_all_books = async () => {
+  const response = await axios.get(API_URL)
+  return response.data
+}
 
 function App() {
 
@@ -38,6 +45,14 @@ function App() {
     setBooks(updated_books);
 
    }
+
+   useEffect(() =>{
+    let mounted = true;
+    fetch_all_books().then((items) =>{
+      setBooks(items);
+    });
+    return () => (mounted=false);
+   },[]);
 
   return (
     <div className="app">
